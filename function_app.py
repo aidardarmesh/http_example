@@ -14,6 +14,8 @@ def http_trigger(
     req: func.HttpRequest,
     outputDocument: func.Out[func.Document]
 ) -> func.HttpResponse:
+    import os
+    logging.info(f"Cosmos DB connection string: {os.environ['CosmosDbConnectionString']}")
     logging.info('Python HTTP trigger function processed a request.')
     logging.info('Python Cosmos DB trigger function processed a request.')
 
