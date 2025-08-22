@@ -4,24 +4,34 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.function_name(name="HttpTrigger")
 @app.route(route="http_trigger")
+@app.generic_output_binding(
+    arg_name="signalr_message", 
+    type="signalR", 
+    hub_name="agentsHub")
 def http_trigger(
-    req: func.HttpRequest
+    req: func.HttpRequest,
+    signalr_message: func.Out[str]
 ) -> func.HttpResponse:
     name = req.params.get('name')
     if not name:
         try:
             req_body = req.get_json()
         except ValueError:
-            pass
-        else:
+            req_body = None
+        if req_body:
             name = req_body.get('name')
 
     if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
+        message = {
+            "target": "newMessage",  # the client method to invoke
+            "arguments": [name]      # the data sent to clients
+        }
+        signalr_message.set(message)
+        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully and sent a message to SignalR clients.")
     else:
         return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
+            "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
+            status_code=200
         )
 
 @app.function_name(name="Negotiate")
