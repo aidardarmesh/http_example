@@ -1,3 +1,4 @@
+import os
 import azure.functions as func
 import logging
 
@@ -9,13 +10,13 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
     arg_name="outputDocument", 
     database_name="my-database", 
     container_name="my-container", 
-    connection="CosmosDbConnectionString")
+    connection="CosmosDB")
 def http_trigger(
     req: func.HttpRequest,
     outputDocument: func.Out[func.Document]
 ) -> func.HttpResponse:
-    import os
-    logging.info(f"Cosmos DB connection string: {os.environ['CosmosDbConnectionString']}")
+    import os  
+    logging.info(f"CosmosDB string: {os.getenv('CosmosDB')}")
     logging.info('Python HTTP trigger function processed a request.')
     logging.info('Python Cosmos DB trigger function processed a request.')
 
