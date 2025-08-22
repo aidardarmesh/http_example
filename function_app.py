@@ -12,7 +12,8 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
     connection="CosmosDbConnectionString")
 def http_trigger(
     req: func.HttpRequest,
-    outputDocument: func.Out[func.Document]) -> func.HttpResponse:
+    outputDocument: func.Out[func.Document]
+) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
     logging.info('Python Cosmos DB trigger function processed a request.')
 
@@ -26,7 +27,7 @@ def http_trigger(
             name = req_body.get('name')
 
     if name:
-        outputDocument.set(func.Document.from_dict({"name": name}))
+        outputDocument.set(func.Document.from_dict({"id": name}))
         return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
     else:
         return func.HttpResponse(
