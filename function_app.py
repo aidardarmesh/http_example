@@ -11,8 +11,8 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
     database_name="my-database",
     collection_name="my-container",
     connection_string_setting="CosmosDBConnectionString",
-    lease_container_name="leases",
-    create_lease_container_if_not_exists=True)
+    lease_collection_name="leases",
+    create_lease_collection_if_not_exists=True)
 @app.generic_output_binding(
     arg_name="signalr_message", 
     type="signalR", 
