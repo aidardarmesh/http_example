@@ -19,7 +19,7 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
     hub_name="agentsHub")
 def cosmosdb_trigger(
     documents: func.DocumentList,
-    signalr_message: func.Out
+    signalr_message: func.Out[str]
 ) -> func.HttpResponse:
     if documents:
         logging.info(f"{len(documents)} document changes detected.")
