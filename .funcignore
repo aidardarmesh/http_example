@@ -7,3 +7,4 @@ local.settings.json
 test
 .venv
 README.md
+client.py
