@@ -2,13 +2,19 @@ import azure.functions as func
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
-@app.function_name(name="HttpTrigger")
-@app.route(route="http_trigger")
+@app.function_name(name="CosmosDBTrigger")
+@app.cosmos_db_trigger_v3(
+    arg_name="documents",
+    database_name="my-database",
+    collection_name="my-container",
+    connection_string_setting="CosmosDBConnectionString",
+    lease_container_name="leases",
+    create_lease_container_if_not_exists=True)
 @app.generic_output_binding(
     arg_name="signalr_message", 
     type="signalR", 
     hub_name="agentsHub")
-def http_trigger(
+def cosmosdb_trigger(
     req: func.HttpRequest,
     signalr_message: func.Out[str]
 ) -> func.HttpResponse:
