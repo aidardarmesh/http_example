@@ -15,30 +15,14 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
     type="signalR", 
     hub_name="agentsHub")
 def cosmosdb_trigger(
-    req: func.HttpRequest,
+    documents: func.DocumentList,
     signalr_message: func.Out[str]
 ) -> func.HttpResponse:
-    name = req.params.get('name')
-    if not name:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            req_body = None
-        if req_body:
-            name = req_body.get('name')
-
-    if name:
-        message = {
-            "target": "newMessage",  # the client method to invoke
-            "arguments": [name]      # the data sent to clients
-        }
-        signalr_message.set(message)
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully and sent a message to SignalR clients.")
-    else:
-        return func.HttpResponse(
-            "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-            status_code=200
-        )
+    message = {
+        "target": "newMessage",
+        "arguments": [documents]
+    }
+    signalr_message.set(message)
 
 @app.function_name(name="Negotiate")
 @app.route(route="negotiate", auth_level=func.AuthLevel.ANONYMOUS, methods=["GET"])
