@@ -1,6 +1,9 @@
 import azure.functions as func
+import logging
+
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+
 
 @app.function_name(name="CosmosDBTrigger")
 @app.cosmos_db_trigger_v3(
@@ -18,11 +21,16 @@ def cosmosdb_trigger(
     documents: func.DocumentList,
     signalr_message: func.Out[str]
 ) -> func.HttpResponse:
-    message = {
-        "target": "newMessage",
-        "arguments": [documents]
-    }
-    signalr_message.set(message)
+    if documents:
+        logging.info(f"{len(documents)} document changes detected.")
+        message = {
+            "target": "newMessage",
+            "arguments": [documents]
+        }
+        signalr_message.set(message)
+    else:
+        logging.info("No document changes detected.")
+
 
 @app.function_name(name="Negotiate")
 @app.route(route="negotiate", auth_level=func.AuthLevel.ANONYMOUS, methods=["GET"])
